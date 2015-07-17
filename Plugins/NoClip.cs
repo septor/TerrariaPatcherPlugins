@@ -7,11 +7,11 @@ using Terraria;
 
 namespace SeptorPlugins
 {
-    public class NoClip : MarshalByRefObject, IPluginUpdate
+    public class NoClip : MarshalByRefObject, IPluginUpdate, IPluginChatCommand
     {
         private bool noclip = false;
         private Keys noclipKey;
-        
+
         public NoClip()
         {
             if (!Keys.TryParse(IniAPI.ReadIni("NoClip", "NoclipKey", "Q", writeIt: true), out noclipKey))
@@ -58,6 +58,13 @@ namespace SeptorPlugins
             {
                 player.immune = false;
             }
+        }
+
+        public bool OnChatCommand(string command, string[] args)
+        {
+            if (command != "noclip") return false;
+            noclip = !noclip;
+            return true;
         }
     }
 }
