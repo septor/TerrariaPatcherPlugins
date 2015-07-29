@@ -7,10 +7,11 @@ using Terraria;
 
 namespace SeptorPlugins
 {
-    public class NoClip : MarshalByRefObject, IPluginUpdate, IPluginChatCommand
+    public class NoClip : MarshalByRefObject, IPluginPlayerUpdate, IPluginChatCommand
     {
         private bool noclip = false;
         private Keys noclipKey;
+        private int immuneTime;
 
         public NoClip()
         {
@@ -25,17 +26,14 @@ namespace SeptorPlugins
             }, noclipKey);
         }
 
-        public void OnUpdate()
+        public void OnPlayerUpdate(Player player)
         {
-            var player = Main.player[Main.myPlayer];
+            player = Main.player[Main.myPlayer];
+            immuneTime = player.immuneTime;
 
             if (noclip)
             {
                 float magnitude = 6f;
-
-                player.fallStart = (int)player.position.Y;
-                player.immune = true;
-                player.immuneTime = 1000;
 
                 if (player.controlUp || player.controlJump)
                 {
@@ -53,10 +51,14 @@ namespace SeptorPlugins
                 {
                     player.position = new Vector2(player.position.X + magnitude, player.position.Y);
                 }
+
+                player.fallStart = (int)player.position.Y;
+                player.immune = true;
+                player.immuneTime = 1000;
             }
             else
             {
-                player.immune = false;
+                player.immuneTime = immuneTime;
             }
         }
 
